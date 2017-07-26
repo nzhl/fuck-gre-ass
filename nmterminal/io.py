@@ -30,6 +30,10 @@ class Browser(object):
             dump(cookies_dict, file)
 
 
+    def clear_cookies(self):
+        self.session.cookies.clear_session_cookies()
+
+
     def get(self, url):
         response = self.session.get(url, headers=HEADERS)
         return response

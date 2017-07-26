@@ -24,13 +24,16 @@ class Client(object):
             self.parse_modules(response.content)
             return 
 
+        self.moodle.clear_cookies()
+        should_alert = False
         while True:
-            should_alert = False
             username, password = self.ui.get_login_info(should_alert)
             response = self.moodle.post(url=LOGIN_URL, form={
                 'username': username,
                 'password': password,
             })
+            
+            logger.debug(response.url)
             if response.url == INDEX_URL:
                 break
             else:
