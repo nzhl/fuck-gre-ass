@@ -6,10 +6,10 @@ SEARCH_URL = "http://www.xiami.com/search/?key="
 XML_URL = "http://www.xiami.com/song/playlist/id/"
 
 
-DATA_PATH = join(expanduser('~'), '.nmterminal')
-SONG_PATH = join(DATA_PATH, 'song')
-LOG_PATH = join(DATA_PATH, 'log')
-COOKIE_PATH = join(DATA_PATH, 'cookies')
+DATA_DIR = join(expanduser('~'), '.nmterminal')
+SONG_DIR = join(DATA_DIR, 'song')
+LOG_DIR = join(DATA_DIR, 'log')
+COOKIE_DIR = join(DATA_DIR, 'cookies')
 
 
 HEADERS = {

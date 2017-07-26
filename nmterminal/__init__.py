@@ -8,5 +8,7 @@ def go():
         client = Client()
         client.loop()
     except KeyboardInterrupt:
-        client.ui.deinit()
         logger.debug("\n" + "-" * 40 + "\nProgram Exit\n" + "-" * 40)
+    finally:
+        client.ui.deinit()
+        client.moodle.save_cookies()

@@ -1,35 +1,41 @@
-from os.path import isdir, join
+from os.path import isdir, join, isfile
 from os import mkdir
-from shlex import quote
-from urllib.parse import unquote
-from subprocess import Popen
-from requests import get
+from pickle import load, dump
 
+from requests.utils import dict_from_cookiejar, add_dict_to_cookiejar
+from requests import get, Session
 
 from .config import *
 
 
-def raw2url(raw):
-    matrix_height = int(raw[:raw.find('h')])
-    raw = raw[raw.find('h'):]
-    matrix_width = len(raw) // matrix_height
-    remainer = len(raw) % matrix_height
+class Browser(object):
+    def __init__(self, name):
+        self.session = Session()
+        self.path = join(COOKIE_DIR, '%s.cookie' % name)
+        self.load_cookies()
+        
 
-    url = []
-    for y in range(matrix_width):
-        for x in range(matrix_height):
-            index = x * matrix_width + y + min(x, remainer)
-            url.append(raw[index])
-    for i in range(remainer):
-        url.append(raw[(i+1) * (matrix_width + 1) - 1])
-    return unquote("".join(url)).replace("^", "0")
+    def load_cookies(self):
+        if not isfile(self.path):
+            return
+        with open(self.path, "rb") as file:
+            add_dict_to_cookiejar(self.session.cookies, load(file))
 
-def cache_song(url, name):
-    if not isdir(SONG_PATH):
-        mkdir(SONG_PATH)
 
-    song_path = join(SONG_PATH, str(hash(name))) + ".mp3"
-    with open(song_path, "wb") as file:
-        response = get(url, headers=HEADERS)
-        file.write(response.content)
-    Popen("afplay " + song_path, shell=True)
+    def save_cookies(self):
+        if not isdir(COOKIE_DIR):
+            mkdir(COOKIE_DIR)
+        with open(self.path, "wb") as file:
+            cookies_dict = dict_from_cookiejar(self.session.cookies)
+            dump(cookies_dict, file)
+
+
+    def get(self, url):
+        response = self.session.get(url, headers=HEADERS)
+        return response
+
+
+    def post(self, url, form):
+        response =  self.session.post(url=url, data=form, headers=HEADERS)
+        return response
+
