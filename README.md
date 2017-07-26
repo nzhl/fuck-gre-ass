@@ -7,7 +7,7 @@ An awesome terminal tool for nottingham moodle.
 
 
 
-![NMTerminal](https://raw.githubusercontent.com/nzhl/nmterminal/master/resource/record.gif)]
+![NMTerminal](https://raw.githubusercontent.com/nzhl/nmterminal/master/resource/record.gif)
 
 
 ### Features
