@@ -20,7 +20,7 @@ class Client(object):
     
     def login(self):
         response = self.moodle.get(INDEX_URL)
-        if response.url == INDEX_URL:
+        if response and response.url == INDEX_URL:
             self.parse_modules(response.content)
             return 
 
@@ -33,7 +33,6 @@ class Client(object):
                 'password': password,
             })
             
-            logger.debug(response.url)
             if response.url == INDEX_URL:
                 break
             else:
@@ -92,7 +91,9 @@ class Client(object):
     def bgm(self):
         keyword = str(self.ui.get_song_name(), 'utf-8')
         response = self.xiami.get(SEARCH_URL + keyword)
-        self.parse_songs(response.content)
+        # use response.text to pre decode the content
+        # since requests detect some pages encoding into windos 1254
+        self.parse_songs(response.text)
     
 
     def parse_modules(self, content):
@@ -114,7 +115,9 @@ class Client(object):
         songs = []
         soup = BeautifulSoup(content, "lxml")
         rows = soup.find_all(attrs={'data-playstatus':"1"})
-        for i in range(10):
+        num_of_rows = min(len(rows), 10)
+        logger.debug(soup.prettify())
+        for i in range(num_of_rows):
             row_tag = rows[i]
             if row_tag.select(".song_name"):
                 name = row_tag.select(".song_name")[0].get_text(strip=True)

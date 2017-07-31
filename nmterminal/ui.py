@@ -83,7 +83,7 @@ class UI(object):
         self.print(col_offset=self.mid_col, string="Music Search")
         self.print(row_offset=2, string="Keyword: ", color=4)
         curses.echo()
-        keyword = self.scanf(row_offset=2, col_offset=9, limit=50)
+        keyword = self.scanf(row_offset=2, col_offset=9, limit=100)
         curses.noecho()
         return keyword
 

@@ -3,14 +3,18 @@ from os import mkdir
 from pickle import load, dump
 
 from requests.utils import dict_from_cookiejar, add_dict_to_cookiejar
+from requests.exceptions import TooManyRedirects
 from requests import get, Session
 
 from .config import *
+from .logger import get_logger
 
+logger = get_logger(__name__)
 
 class Browser(object):
     def __init__(self, name):
         self.session = Session()
+        self.session.max_redirects = 5
         self.path = join(COOKIE_DIR, '%s.cookie' % name)
         self.load_cookies()
         
@@ -35,7 +39,10 @@ class Browser(object):
 
 
     def get(self, url):
-        response = self.session.get(url, headers=HEADERS)
+        try:
+            response = self.session.get(url, headers=HEADERS)
+        except TooManyRedirects:
+            response = None
         return response
 
 
